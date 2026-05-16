@@ -15,12 +15,16 @@ EXPOSE 5905
 
 
 RUN rm /etc/apt/sources.list.d/wine-obs.list && \
-    apt update && \
-    apt --no-install-recommends install wget winbind tigervnc-standalone-server tigervnc-common openbox \
-    mesa-utils \
-    procps \
-    pev \
-    pulseaudio-utils -y
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+        wget \
+        ca-certificates \
+        winbind \
+        tigervnc-standalone-server \
+        tigervnc-common \
+        openbox \
+        xdotool && \
+    rm -rf /var/lib/apt/lists/*
 
 ADD wine/simsun.ttc /home/user/.wine/drive_c/windows/Fonts/simsun.ttc
 ADD wine/微信.lnk /home/user/.wine/drive_c/users/Public/Desktop/微信.lnk
@@ -37,8 +41,8 @@ RUN wget --no-check-certificate -O /Tencent.zip "https://github.com/tom-snow/doc
     unzip Tencent.zip && \
     mv wine/Tencent "/home/user/.wine/drive_c/Program Files/" && \
     chown root:root -R /home/user/.wine && \
-    apt autoremove -y && \
-    apt clean && \
+    apt-get autoremove -y && \
+    apt-get clean && \
     rm -rf wine Tencent.zip /tmp/*
 
 ENTRYPOINT [ "/bin/dumb-init" ]

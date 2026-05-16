@@ -1,7 +1,5 @@
 # docker-ComWechat
-[![docker 镜像](https://dockeri.co/image/tomsnow1999/docker-com_wechat_robot)](https://hub.docker.com/r/tomsnow1999/docker-com_wechat_robot/tags)
-
-[![镜像大小](https://badgen.net/docker/size/tomsnow1999/docker-com_wechat_robot)](https://hub.docker.com/r/tomsnow1999/docker-com_wechat_robot/tags)
+[![Publish to GHCR](https://github.com/jiz4oh/docker-ComWechat/actions/workflows/docker_build.yml/badge.svg)](https://github.com/jiz4oh/docker-ComWechat/actions/workflows/docker_build.yml)
 
 A docker image for [ComWeChatRobot](https://github.com/ljc545w/ComWeChatRobot)
 
@@ -17,7 +15,7 @@ docker run \
     --privileged \
     -v $(pwd)/volume/WeChat\ Files/:'/home/user/.wine/drive_c/users/user/My Documents/WeChat Files/'  \
     -v $(pwd)/volume/Application\ Data:'/home/user/.wine/drive_c/users/user/Application Data/' \
-    tomsnow1999/docker-com_wechat_robot
+    ghcr.io/jiz4oh/docker-comwechat
 ```
 
 ### 参数说明
@@ -25,8 +23,29 @@ docker run \
 * network host: 使用宿主机网络(在 Linux Docker 环境下使用)
 * 环境变量 VNCPASS: 连接 VNC 的密码（可自定义，建议在服务器上使用本镜像的话设置得难一点）
 * 环境变量 COMWECHAT: [ComWeChatRobot](https://github.com/ljc545w/ComWeChatRobot/releases)具体版本的动态库文件压缩包(右键复制发布的文件的下载链接)【不设置此参数则默认为`3.7.0.30-0.0.5`的链接】
+* 镜像仓库: `ghcr.io/jiz4oh/docker-comwechat`
 * 目录映射 `WeChat Files`: 微信收到的图片/文件存储的目录(可以取消目录映射)
 * 目录映射 `Application Data`: 微信数据目录(可以取消目录映射)
+
+### 登录恢复点击
+镜像内包含 `xdotool`，用于微信在运行过程中被服务端退出登录后自动点击登录按钮。首次启动后的扫码登录流程不会自动点击，仍通过 VNC 扫码登录。
+
+可配置环境变量：
+* `COMWECHAT_LOGIN_RECOVERY_CLICK`: 是否启用登录恢复点击，默认 `true`
+* `COMWECHAT_LOGIN_STATE_INTERVAL`: 登录态检查间隔秒数，默认 `5`
+* `COMWECHAT_LOGIN_CLICK_INTERVAL`: 点击重试间隔秒数，默认 `5`
+* `COMWECHAT_LOGIN_RECOVERY_TIMEOUT`: 单次掉线后的点击恢复窗口秒数，默认 `300`
+* `COMWECHAT_LOGIN_CLICK_X` / `COMWECHAT_LOGIN_CLICK_Y`: 指定绝对点击坐标，未设置时按微信窗口位置自动计算
+* `COMWECHAT_LOGIN_CLICK_BOTTOM_OFFSET`: 自动计算坐标时距离窗口底部的偏移，默认 `90`
+
+验证镜像时使用独立 compose，避免影响正在使用的 `comwechat`：
+
+``` shell
+docker build -t comwechat:click-test .
+docker compose -p comwechat-click-test -f docker-compose.click-test.yaml up -d
+docker logs --tail 160 comwechat-click-test
+docker compose -p comwechat-click-test -f docker-compose.click-test.yaml down -v
+```
 
 ## 如何使用
 1. 运行上方命令启动镜像(更推荐使用 [docker-compose](./docker-compose.yaml) )

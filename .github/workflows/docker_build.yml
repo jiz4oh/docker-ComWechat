@@ -1,76 +1,65 @@
-name: CI to Docker Hub
+name: Publish to GHCR
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
     paths:
       - .github/workflows/docker_build.yml
-      - 'ComWeChatRobot/**'
+      - '.dockerignore'
       - 'wine/**'
       - 'Dockerfile'
       - 'VERSION'
       - 'run.py'
       - 'WeChatHook.exe'
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/docker-comwechat
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
-        # with:
-        #   lfs: true
-      
-      # - name: Checkout LFS objects
-      #   run: git lfs checkout
-
-      # - name: init submodule
-      #   run: git submodule update --init --recursive
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
+        uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
         id: buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v3
 
-      - name: Cache Docker layers
-        uses: actions/cache@v2
+      - name: Login to GHCR
+        uses: docker/login-action@v3
         with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
-
-      - uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Get Version Tag
         id: get_version_tag
-        run: echo ::set-output name=VERSION::`cat VERSION`
+        run: echo "VERSION=$(cat VERSION)" >> "$GITHUB_OUTPUT"
 
       - name: Build and push
         id: docker_build
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v6
         with:
           context: ./
           file: ./Dockerfile
-          platforms: linux/arm64,linux/amd64
+          platforms: linux/amd64
           builder: ${{ steps.buildx.outputs.name }}
           push: true
           tags: |
-            ${{ secrets.DOCKER_HUB_USERNAME }}/docker-com_wechat_robot:latest
-            ${{ secrets.DOCKER_HUB_USERNAME }}/docker-com_wechat_robot:${{ steps.get_version_tag.outputs.VERSION }}
+            ${{ env.IMAGE_NAME }}:latest
+            ${{ env.IMAGE_NAME }}:${{ steps.get_version_tag.outputs.VERSION }}
           labels: |
-            maintainer=${{ github.event.head_commit.author.email }}
-            timestamp=${{ github.event.head_commit.timestamp }}
-            message=${{ github.event.head_commit.message }}
-            commit=${{ github.event.head_commit.url }}
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.version=${{ steps.get_version_tag.outputs.VERSION }}
+            org.opencontainers.image.revision=${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}

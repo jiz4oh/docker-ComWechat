@@ -1,0 +1,22 @@
+services:
+    wechatpchook:
+        container_name: comwechat-click-test
+        environment:
+            - VNCPASS=clicktest
+            - COMWECHAT_LOGIN_RECOVERY_CLICK=true
+            - COMWECHAT_LOGIN_STATE_INTERVAL=3
+            - COMWECHAT_LOGIN_CLICK_INTERVAL=5
+            - COMWECHAT_LOGIN_RECOVERY_TIMEOUT=60
+        ipc: host
+        volumes:
+            - "comwechat_click_test_files:/home/user/.wine/drive_c/users/user/My Documents/WeChat Files/"
+            - "comwechat_click_test_data:/home/user/.wine/drive_c/users/user/Application Data/"
+        ports:
+            - "15905:5905"
+        privileged: true
+        network_mode: bridge
+        image: comwechat:click-test
+
+volumes:
+    comwechat_click_test_files:
+    comwechat_click_test_data:
