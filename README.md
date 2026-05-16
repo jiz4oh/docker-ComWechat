@@ -39,7 +39,7 @@ docker run \
 * `COMWECHAT_LOGIN_CLICK_BOTTOM_OFFSET`: 自动计算坐标时距离窗口底部的偏移，默认 `90`
 
 ### 消息桥接扩展
-镜像内置 `run2.py` 与 `comwechat_bridge.py`。默认入口为 `/run2.py`，启动后会先尝试读取 `COMWECHAT_RUNTIME_ZIP` 指向的压缩包，默认路径为 `/runtime-host/comwechat.zip`；如果文件不存在，则回退到 `COMWECHAT` 环境变量指定的 Release 压缩包下载流程。
+镜像内置 `run.py` 与 `comwechat_bridge.py`。默认入口为 `/run.py`，启动后会先尝试读取 `COMWECHAT_RUNTIME_ZIP` 指向的压缩包，默认路径为 `/runtime-host/comwechat.zip`；如果文件不存在，则回退到 `COMWECHAT` 环境变量指定的 Release 压缩包下载流程。
 
 启用桥接：
 * `COMWECHAT_BRIDGE_ENABLED`: 是否启用桥接，默认关闭

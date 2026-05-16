@@ -33,7 +33,7 @@ ADD wine/system.reg wine/user.reg wine/userdef.reg /home/user/.wine/
 # COPY wine/Tencent.zip /Tencent.zip
 RUN wget --no-check-certificate -O /Tencent.zip "https://github.com/tom-snow/docker-ComWechat/releases/download/v0.2_wc3.7.0.30/Tencent.zip" && \
     wget --no-check-certificate -O /bin/dumb-init "https://github.com/Yelp/dumb-init/releases/download/v1.2.5/dumb-init_1.2.5_x86_64" && \
-    mkdir -p "/home/user/WeChat Files" "/home/user/.wine/drive_c/users/user/Application Data" && \
+    mkdir -p "/home/user/WeChat Files" "/home/user/.wine/drive_c/users/user/Application Data" "/runtime-host" && \
     chmod a+x /bin/dumb-init && \
     rm -rf "/home/user/.wine/drive_c/Program Files/Tencent/" && \
     unzip Tencent.zip && \
@@ -43,8 +43,8 @@ RUN wget --no-check-certificate -O /Tencent.zip "https://github.com/tom-snow/doc
     apt-get clean && \
     rm -rf wine Tencent.zip /tmp/*
 
-ADD WeChatHook.exe run.py run2.py comwechat_bridge.py /
-RUN chmod a+x /run.py /run2.py
+ADD WeChatHook.exe run.py comwechat_bridge.py /
+RUN chmod a+x /run.py
 
 ENTRYPOINT [ "/bin/dumb-init" ]
-CMD ["/run2.py", "start"]
+CMD ["/run.py", "start"]

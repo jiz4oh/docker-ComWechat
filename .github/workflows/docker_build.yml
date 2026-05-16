@@ -12,7 +12,6 @@ on:
       - 'Dockerfile'
       - 'VERSION'
       - 'run.py'
-      - 'run2.py'
       - 'comwechat_bridge.py'
       - 'WeChatHook.exe'
 
