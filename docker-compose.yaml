@@ -5,6 +5,13 @@ services:
         environment:
             - VNCPASS=asdfgh123
             - COMWECHAT=https://github.com/ljc545w/ComWeChatRobot/releases/download/3.7.0.30-0.0.5/3.7.0.30-0.0.5.zip
+            - COMWECHAT_BRIDGE_ENABLED=true
+            - COMWECHAT_BRIDGE_API_HOST=0.0.0.0
+            - COMWECHAT_BRIDGE_API_PORT=19088
+            - COMWECHAT_API_PORT=18888
+            - COMWECHAT_BOOT_REORDER_WINDOW_SECONDS=5
+            - COMWECHAT_CONSUME_RATE_PER_SEC=50
+            - COMWECHAT_BRIDGE_MAX_BUFFER=20000
         ipc: host
         volumes:
             - "./volume/WeChat Files/:/home/user/.wine/drive_c/users/user/My Documents/WeChat Files/"

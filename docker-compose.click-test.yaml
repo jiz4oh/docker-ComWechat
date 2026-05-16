@@ -7,6 +7,10 @@ services:
             - COMWECHAT_LOGIN_STATE_INTERVAL=3
             - COMWECHAT_LOGIN_CLICK_INTERVAL=5
             - COMWECHAT_LOGIN_RECOVERY_TIMEOUT=60
+            - COMWECHAT_BRIDGE_ENABLED=true
+            - COMWECHAT_BRIDGE_API_HOST=0.0.0.0
+            - COMWECHAT_BRIDGE_API_PORT=19088
+            - COMWECHAT_API_PORT=18888
         ipc: host
         volumes:
             - "comwechat_click_test_files:/home/user/.wine/drive_c/users/user/My Documents/WeChat Files/"

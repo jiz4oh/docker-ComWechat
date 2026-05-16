@@ -38,6 +38,16 @@ docker run \
 * `COMWECHAT_LOGIN_CLICK_X` / `COMWECHAT_LOGIN_CLICK_Y`: 指定绝对点击坐标，未设置时按微信窗口位置自动计算
 * `COMWECHAT_LOGIN_CLICK_BOTTOM_OFFSET`: 自动计算坐标时距离窗口底部的偏移，默认 `90`
 
+### 消息桥接扩展
+镜像内置 `run2.py` 与 `comwechat_bridge.py`。默认入口为 `/run2.py`，启动后会先尝试读取 `COMWECHAT_RUNTIME_ZIP` 指向的压缩包，默认路径为 `/runtime-host/comwechat.zip`；如果文件不存在，则回退到 `COMWECHAT` 环境变量指定的 Release 压缩包下载流程。
+
+启用桥接：
+* `COMWECHAT_BRIDGE_ENABLED`: 是否启用桥接，默认关闭
+* `COMWECHAT_BRIDGE_API_HOST`: 桥接 HTTP API 监听地址，默认 `0.0.0.0`
+* `COMWECHAT_BRIDGE_API_PORT`: 桥接 HTTP API 端口，默认 `19088`
+* `COMWECHAT_BRIDGE_IN_PORT`: ComWeChat hook 推送消息的内部端口，默认 `23456`
+* `COMWECHAT_API_PORT`: ComWeChat HTTP API 端口，默认 `18888`
+
 验证镜像时使用独立 compose，避免影响正在使用的 `comwechat`：
 
 ``` shell
