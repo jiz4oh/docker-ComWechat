@@ -48,13 +48,10 @@ docker run \
 * `COMWECHAT_BRIDGE_IN_PORT`: ComWeChat hook 推送消息的内部端口，默认 `23456`
 * `COMWECHAT_API_PORT`: ComWeChat HTTP API 端口，默认 `18888`
 
-验证镜像时使用独立 compose，避免影响正在使用的 `comwechat`：
+验证镜像时使用测试用例，脚本会临时生成隔离 compose、启动独立 project，并在结束时清理容器和卷：
 
 ``` shell
-docker build -t comwechat:click-test .
-docker compose -p comwechat-click-test -f docker-compose.click-test.yaml up -d
-docker logs --tail 160 comwechat-click-test
-docker compose -p comwechat-click-test -f docker-compose.click-test.yaml down -v
+bash tests/smoke_test.sh
 ```
 
 ## 如何使用
