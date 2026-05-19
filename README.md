@@ -35,6 +35,10 @@ docker run \
 * `COMWECHAT_LOGIN_STATE_INTERVAL`: 登录态检查间隔秒数，默认 `5`
 * `COMWECHAT_LOGIN_CLICK_INTERVAL`: 点击重试间隔秒数，默认 `5`
 * `COMWECHAT_LOGIN_RECOVERY_TIMEOUT`: 单次掉线后的点击恢复窗口秒数，默认 `300`
+* `COMWECHAT_LOGIN_CONFIRM_CLICK`: 掉线提示弹窗是否先点击“确定”，默认 `true`
+* `COMWECHAT_LOGIN_CONFIRM_CLICK_X` / `COMWECHAT_LOGIN_CONFIRM_CLICK_Y`: 指定“确定”按钮绝对点击坐标
+* `COMWECHAT_LOGIN_CONFIRM_CLICK_BOTTOM_OFFSET`: 自动计算“确定”坐标时距窗口底部偏移，默认 `170`
+* `COMWECHAT_LOGIN_CONFIRM_AFTER_WAIT`: 点击“确定”后等待再点“登录”的秒数，默认 `0.4`
 * `COMWECHAT_LOGIN_CLICK_X` / `COMWECHAT_LOGIN_CLICK_Y`: 指定绝对点击坐标，未设置时按微信窗口位置自动计算
 * `COMWECHAT_LOGIN_CLICK_BOTTOM_OFFSET`: 自动计算坐标时距离窗口底部的偏移，默认 `90`
 

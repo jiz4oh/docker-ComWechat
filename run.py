@@ -183,16 +183,44 @@ class DockerWechatHook:
         env = os.environ.copy()
         env["DISPLAY"] = os.environ.get("DISPLAY", ":5")
         subprocess.run(["xdotool", "windowactivate", "--sync", window_id], env=env, check=False)
+
+        self.click_logout_confirm_button(window_id, x, y, width, height, env)
+        return self.click_window_point(window_id, click_x, click_y, "登录按钮", env)
+
+    def click_logout_confirm_button(self, window_id, x, y, width, height, env):
+        if not env_bool("COMWECHAT_LOGIN_CONFIRM_CLICK", True):
+            return False
+
+        confirm_x = env_int("COMWECHAT_LOGIN_CONFIRM_CLICK_X", x + width // 2)
+        confirm_y = env_int(
+            "COMWECHAT_LOGIN_CONFIRM_CLICK_Y",
+            y + height - env_int("COMWECHAT_LOGIN_CONFIRM_CLICK_BOTTOM_OFFSET", 170),
+        )
+
+        clicked = self.click_window_point(window_id, confirm_x, confirm_y, "退出提示确定按钮", env)
+        if clicked:
+            wait_seconds = max(0.0, env_float("COMWECHAT_LOGIN_CONFIRM_AFTER_WAIT", 0.4))
+            if wait_seconds > 0:
+                time.sleep(wait_seconds)
+        return clicked
+
+    def click_window_point(self, window_id, click_x, click_y, button_label, env):
         result = subprocess.run(
             ["xdotool", "mousemove", "--sync", str(click_x), str(click_y), "click", "1"],
             env=env,
             check=False,
         )
         if result.returncode == 0:
-            print(f"已尝试点击登录按钮: window={window_id} x={click_x} y={click_y}", flush=True)
+            print(
+                f"已尝试点击{button_label}: window={window_id} x={click_x} y={click_y}",
+                flush=True,
+            )
             return True
 
-        print(f"点击登录按钮失败: window={window_id} code={result.returncode}", flush=True)
+        print(
+            f"点击{button_label}失败: window={window_id} x={click_x} y={click_y} code={result.returncode}",
+            flush=True,
+        )
         return False
 
     def find_wechat_window(self):
